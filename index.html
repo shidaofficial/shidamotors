@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shida Motors | Lüks Otomobil Galerisi</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDtv-s0FtXE7pkALLmn14_TxxNJ3AO8uIw",
+            authDomain: "shidamotors.firebaseapp.com",
+            projectId: "shidamotors",
+            storageBucket: "shidamotors.firebasestorage.app",
+            messagingSenderId: "1080261901556",
+            appId: "1:1080261901556:web:1898bee0ab9022f543b2a1",
+            measurementId: "G-5MV595ZLPK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.auth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.signOut = signOut;
+
+        onAuthStateChanged(auth, (user) => {
+            const authBtn = document.getElementById('authNavBtn');
+            const userStatus = document.getElementById('userStatus');
+            if (user) {
+                authBtn.style.display = "none";
+                userStatus.style.display = "block";
+                document.getElementById('userNameDisp').innerText = user.email.split('@')[0];
+            } else {
+                authBtn.style.display = "block";
+                userStatus.style.display = "none";
+            }
+        });
+    </script>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <a href="index.html" class="logo">
+            <img src="img/shidalogo.png" alt="Shida Logo" class="logo-img">
+            <span>MOTORS</span>
+        </a>
+        
+        <nav>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="ilanPanelAc()">İlan Koy</a></li>
+                <li><a href="javascript:void(0)" onclick="iletisimAc()">İletişim</a></li>
+                <li id="authNavBtn"><a href="javascript:void(0)" onclick="authModalAc()" class="auth-link">Giriş / Kayıt</a></li>
+                <li id="userStatus" style="display: none;">
+                    <span id="userNameDisp" style="color: #eee; margin-right: 10px; font-weight: bold;"></span>
+                    <a href="javascript:void(0)" onclick="cikisYap()" style="color: #e74c3c; font-size: 12px; text-transform: none;">Çıkış Yap</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="main-content">
+    <aside class="sidebar">
+        <h3>Filtrele</h3>
+        <div class="filter-group">
+            <label>Marka</label>
+            <select id="brandFilter">
+                <option value="Tümü">Tümü</option>
+                <option value="Lamborghini">Lamborghini</option>               
+                <option value="BMW">BMW</option>
+                <option value="Mercedes">Mercedes</option>
+                <option value="Tofaş">Tofaş</option>
+                <option value="Renault">Renault</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Fiyat Aralığı</label>
+            <div class="price-inputs" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Gerçek kutular: autocomplete="new-password" Chrome'un adını yazmasını engeller -->
+                <input type="text" id="minPrice" placeholder="Min TL" inputmode="numeric" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" onblur="if(!this.value)this.setAttribute('readonly','')">
+                <input type="text" id="maxPrice" placeholder="Max TL" inputmode="numeric" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" onblur="if(!this.value)this.setAttribute('readonly','')">
+            </div>
+        </div>
+        <button class="filter-btn" onclick="fiyatFiltrele()">Arama Yap</button>
+    </aside>
+
+    <section class="listings">
+        <div class="listing-header" style="margin-bottom: 20px;">
+            <h2 id="listingTitle" style="color: #f39c12; font-size: 28px;">Tümü</h2>
+        </div>
+
+        <div class="car-list" id="carList">
+            <div class="car-item" data-price="10499000" data-brand="Lamborghini" onclick="detayAc('Sarı Lambo', '2024', '5.500', 'Otomatik', '10.499.000 TL', 'img/lambo1.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/lambo1.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Sarı Lambo</h4>
+                    <p>2024 | 5.500 KM | Otomatik</p>
+                    <span class="car-price">10.499.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="9250000" data-brand="Lamborghini" onclick="detayAc('Mavi Ledli Siyah Lambo', '2023', '12.000', 'Otomatik', '9.250.000 TL', 'img/lambo2.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/lambo2.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Mavi Ledli Siyah Lambo</h4>
+                    <p>2023 | 12.000 KM | Otomatik</p>
+                    <span class="car-price">9.250.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="12500000" data-brand="Lamborghini" onclick="detayAc('Mavi ledli Kırmızı Lambo', '2021', '18.500', 'Otomatik', '12.500.000 TL', 'img/lambo3.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/lambo3.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Mavi ledli Kırmızı Lambo</h4>
+                    <p>2021 | 18.500 KM | Otomatik</p>
+                    <span class="car-price">12.500.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="9550000" data-brand="Lamborghini" onclick="detayAc('Siyah Lambo', '2025', '5.000', 'Otomatik', '9.550.000 TL', 'img/lambo4.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/lambo4.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Siyah Lambo</h4>
+                    <p>2025 | 5.000 KM | Otomatik</p>
+                    <span class="car-price">9.550.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="1300000" data-brand="BMW" onclick="detayAc('Beyaz BMW', '2023', '30.750', 'Otomatik', '1.300.000 TL', 'img/bmw1.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/bmw1.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Beyaz BMW</h4>
+                    <p>2023 | 30.750 KM | Otomatik</p>
+                    <span class="car-price">1.300.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="1150000" data-brand="BMW" onclick="detayAc('Gri BMW', '2022', '32.500', 'Otomatik', '1.150.000 TL', 'img/bmw2.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/bmw2.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Gri BMW</h4>
+                    <p>2022 | 32.500 KM | Otomatik</p>
+                    <span class="car-price">1.150.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="1250000" data-brand="Mercedes" onclick="detayAc('Kırmızı Mercedes', '2022', '35.500', 'Otomatik', '1.250.000 TL', 'img/mercedes1.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/mercedes1.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Kırmızı Mercedes</h4>
+                    <p>2022 | 35.500 KM | Otomatik</p>
+                    <span class="car-price">1.250.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="1350000" data-brand="Mercedes" onclick="detayAc('Yeşil Mercedes', '2021', '36.200', 'Otomatik', '1.350.000 TL', 'img/mercedes2.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/mercedes2.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Yeşil Mercedes</h4>
+                    <p>2021 | 36.200 KM | Otomatik</p>
+                    <span class="car-price">1.350.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="700000" data-brand="Tofaş" onclick="detayAc('Tofaş', '2025', '14.800', 'Manuel', '700.000 TL', 'img/tofaş1.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/tofaş1.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Tofaş</h4>
+                    <p>2025 | 14.800 KM | Manuel</p>
+                    <span class="car-price">700.000 TL</span>
+                </div>
+            </div>
+
+            <div class="car-item" data-price="450000" data-brand="Renault" onclick="detayAc('Renault 9', '2022', '1.647.250', 'Manuel', '450.000 TL', 'img/renault1.jpg', 'Caner Buğra Susur', 'Tokat / Zile', '05## ### ####')">
+                <img src="img/renault1.jpg" alt="Lüks Araba">
+                <div class="car-details">
+                    <h4>Renault 9</h4>
+                    <p>2022 | 1.647.250 KM | Manuel</p>
+                    <span class="car-price">450.000 TL</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- CAR MODAL -->
+<div id="carModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="detayKapat()">&times;</span>
+        <div class="modal-grid">
+            <div class="modal-left">
+                <img id="mImg" src="" alt="Araba">
+            </div>
+            <div class="modal-right">
+                <h2 id="mTitle"></h2>
+                <div class="m-specs">
+                    <p><strong>Fiyat:</strong> <span id="mPrice"></span></p>
+                    <p><strong>Model Yılı:</strong> <span id="mYear"></span></p>
+                    <p><strong>Kilometre:</strong> <span id="mKM"></span></p>
+                    <p><strong>Vites:</strong> <span id="mGear"></span></p>
+                </div>
+                <div class="seller-card">
+                    <h4>İlan Sahibi</h4>
+                    <p id="mSellerName">👤 Caner Buğra Susur</p>
+                    <p id="mSellerLoc">📍 Tokat / Zile</p>
+                    <p id="mSellerPhone">📱 05## ### ####</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <span class="close" onclick="authModalKapat()">&times;</span>
+        <h2 id="authTitle" style="color: #f39c12; margin-bottom: 20px;">Giriş Yap</h2>
+        <div class="filter-group">
+            <input type="email" id="authEmail" placeholder="E-posta Adresiniz" autocomplete="email">
+        </div>
+        <div class="filter-group">
+            <input type="password" id="authPass" placeholder="Şifreniz" autocomplete="current-password">
+        </div>
+        <button class="filter-btn" id="mainAuthBtn" onclick="login()">Giriş Yap</button>
+        <p style="margin-top: 15px; font-size: 14px; color: #ccc;">
+            <span id="authSwitchText">Hesabın yok mu?</span> 
+            <a href="javascript:void(0)" id="authSwitchBtn" onclick="toggleAuthMode()" style="color: #f39c12;">Kayıt Ol</a>
+        </p>
+    </div>
+</div>
+
+<!-- ILAN MODAL -->
+<div id="ilanModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close" onclick="ilanPanelKapat()">&times;</span>
+        <div id="adim1">
+            <h2 style="color: #f39c12; margin-bottom: 20px;">Araç Bilgileri (1/2)</h2>
+            <div class="filter-group"><label>İlan Başlığı</label><input type="text" id="iBaslik" placeholder="Örn: Hatasız Boyasız Lambo" autocomplete="off"></div>
+            <div class="filter-group"><label>Marka</label><select id="iMarka"><option value="">Seçiniz...</option><option value="Lamborghini">Lamborghini</option><option value="BMW">BMW</option><option value="Mercedes">Mercedes</option><option value="Tofaş">Tofaş</option><option value="Renault">Renault</option></select></div>
+            <div class="price-inputs" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="iYil" placeholder="Yıl" inputmode="numeric" autocomplete="off">
+                <input type="text" id="iKM" placeholder="KM" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="filter-group"><label>Vites</label><select id="iVites"><option value="">Seçiniz...</option><option value="Otomatik">Otomatik</option><option value="Manuel">Manuel</option></select></div>
+            <div class="filter-group"><label>Fiyat (TL)</label><input type="text" id="iFiyat" placeholder="Sadece rakam" inputmode="numeric" autocomplete="off"></div>
+            <div class="filter-group"><label>Resim Dosya Yolu</label><input type="text" id="iResim" placeholder="Örn: img/araba.jpg" autocomplete="off"></div>
+            <div style="display: flex; gap: 10px;"><button class="filter-btn" style="background: #444;" onclick="ilanPanelKapat()">İptal</button><button class="filter-btn" onclick="sonrakiAdim()">İleri</button></div>
+        </div>
+        <div id="adim2" style="display: none;">
+            <h2 style="color: #f39c12; margin-bottom: 20px;">Sahibi Bilgileri (2/2)</h2>
+            <div class="filter-group"><label>Ad Soyad</label><input type="text" id="iAd" placeholder="Adınız Soyadınız" autocomplete="name"></div>
+            <div class="filter-group"><label>Şehir / İlçe</label><input type="text" id="iKonum" placeholder="Örn: Tokat / Zile" autocomplete="off"></div>
+            <div class="filter-group"><label>Telefon</label><input type="text" id="iTel" placeholder="05XX XXX XX XX" autocomplete="tel"></div>
+            <div style="display: flex; gap: 10px;"><button class="filter-btn" style="background: #444;" onclick="oncekiAdim()">Geri</button><button class="filter-btn" onclick="ilanYayinla()">İlanı Yayınla</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div id="contactModal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <span class="close" onclick="iletisimKapat()">&times;</span>
+        <div class="seller-card" style="border-left: none; text-align: center;">
+            <h2 style="color: #f39c12; margin-bottom: 20px;">İletişim Bilgileri</h2>
+            <p style="font-size: 18px; margin: 10px 0;">👤 <strong>Caner Buğra Susur</strong></p>
+            <p style="margin: 10px 0;">📍 Tokat / Zile</p>
+            <p style="margin: 10px 0;">📱 05## ### ####</p>
+            <p style="margin: 10px 0;">📧 shidaofficial2880@gmail.com</p>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+            <p style="font-size: 14px; color: #aaa;">Hafta içi ve hafta sonu 09:00 - 22:00 arası ulaşabilirsiniz.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+let isLoginMode = true;
+
+function authModalAc() { document.getElementById('authModal').style.display = "block"; }
+function authModalKapat() { document.getElementById('authModal').style.display = "none"; }
+
+function toggleAuthMode() {
+    isLoginMode = !isLoginMode;
+    const title = document.getElementById('authTitle');
+    const btn = document.getElementById('mainAuthBtn');
+    const switchText = document.getElementById('authSwitchText');
+    const switchBtn = document.getElementById('authSwitchBtn');
+
+    if (isLoginMode) {
+        title.innerText = "Giriş Yap";
+        btn.innerText = "Giriş Yap";
+        btn.setAttribute('onclick', 'login()');
+        switchText.innerText = "Hesabın yok mu?";
+        switchBtn.innerText = "Kayıt Ol";
+    } else {
+        title.innerText = "Kayıt Ol";
+        btn.innerText = "Hesap Oluştur";
+        btn.setAttribute('onclick', 'register()');
+        switchText.innerText = "Zaten hesabın var mı?";
+        switchBtn.innerText = "Giriş Yap";
+    }
+}
+
+function register() {
+    const email = document.getElementById('authEmail').value;
+    const pass = document.getElementById('authPass').value;
+    window.createUserWithEmailAndPassword(window.auth, email, pass)
+        .then(() => { alert("Kayıt başarılı kanka, giriş yapıldı!"); authModalKapat(); })
+        .catch((error) => { alert("Hata: " + error.message); });
+}
+
+function login() {
+    const email = document.getElementById('authEmail').value;
+    const pass = document.getElementById('authPass').value;
+    window.signInWithEmailAndPassword(window.auth, email, pass)
+        .then(() => { alert("Hoş geldin kanka!"); authModalKapat(); })
+        .catch((error) => { alert("Giriş yapılamadı: " + error.message); });
+}
+
+function cikisYap() {
+    window.signOut(window.auth).then(() => { alert("Çıkış yapıldı."); });
+}
+
+function fiyatFiltrele() {
+    const min = parseInt(document.getElementById('minPrice').value) || 0;
+    const max = parseInt(document.getElementById('maxPrice').value) || Infinity;
+    const selectedBrand = document.getElementById('brandFilter').value;
+    const titleElement = document.getElementById('listingTitle');
+    const arabalar = document.querySelectorAll('.car-item');
+    titleElement.innerText = selectedBrand === "Tümü" ? "Tümü" : selectedBrand + " Modelleri";
+    arabalar.forEach(araba => {
+        const fiyat = parseInt(araba.getAttribute('data-price'));
+        const marka = araba.getAttribute('data-brand');
+        const fiyatUygun = fiyat >= min && fiyat <= max;
+        const markaUygun = selectedBrand === "Tümü" || marka === selectedBrand;
+        araba.style.display = (fiyatUygun && markaUygun) ? "block" : "none";
+    });
+}
+
+function detayAc(ad, yil, km, vites, fiyat, resim, sAd, sKonum, sTel) {
+    document.getElementById('mTitle').innerText = ad;
+    document.getElementById('mYear').innerText = yil;
+    document.getElementById('mKM').innerText = km;
+    document.getElementById('mGear').innerText = vites;
+    document.getElementById('mPrice').innerText = fiyat;
+    document.getElementById('mImg').src = resim;
+    document.getElementById('mSellerName').innerText = "👤 " + (sAd || "Caner Buğra Susur");
+    document.getElementById('mSellerLoc').innerText = "📍 " + (sKonum || "Tokat / Zile");
+    document.getElementById('mSellerPhone').innerText = "📱 " + (sTel || "05## ### ####");
+    document.getElementById('carModal').style.display = "block";
+}
+
+function detayKapat() { document.getElementById('carModal').style.display = "none"; }
+function iletisimAc() { document.getElementById('contactModal').style.display = "block"; }
+function iletisimKapat() { document.getElementById('contactModal').style.display = "none"; }
+
+function ilanPanelAc() { 
+    document.getElementById('adim1').style.display = "block";
+    document.getElementById('adim2').style.display = "none";
+    document.getElementById('ilanModal').style.display = "block"; 
+}
+function ilanPanelKapat() { document.getElementById('ilanModal').style.display = "none"; }
+
+function sonrakiAdim() {
+    const inputs = ['iBaslik', 'iMarka', 'iYil', 'iKM', 'iVites', 'iFiyat', 'iResim'];
+    let eksik = false;
+    inputs.forEach(id => { if(!document.getElementById(id).value) eksik = true; });
+    if(eksik) { alert("Kanka araç bilgilerinde boş yer bırakamazsın!"); return; }
+    document.getElementById('adim1').style.display = "none";
+    document.getElementById('adim2').style.display = "block";
+}
+
+function oncekiAdim() {
+    document.getElementById('adim1').style.display = "block";
+    document.getElementById('adim2').style.display = "none";
+}
+
+function ilanSil(event, element) {
+    event.stopPropagation();
+    if(confirm("Kanka bu ilanı kaldırmak istediğine emin misin?")) {
+        const kart = element.parentElement;
+        kart.style.opacity = '0';
+        kart.style.transform = 'scale(0.8)';
+        setTimeout(() => { kart.remove(); }, 300);
+    }
+}
+
+function ilanYayinla() {
+    const ad = document.getElementById('iAd').value;
+    const konum = document.getElementById('iKonum').value;
+    const tel = document.getElementById('iTel').value;
+    if(!ad || !konum || !tel) { alert("Kanka satıcı bilgilerini girmeden ilanı yayınlayamazsın!"); return; }
+
+    const baslik = document.getElementById('iBaslik').value;
+    const marka = document.getElementById('iMarka').value;
+    const yil = document.getElementById('iYil').value;
+    const km = document.getElementById('iKM').value;
+    const vites = document.getElementById('iVites').value;
+    const fiyat = document.getElementById('iFiyat').value;
+    const resim = document.getElementById('iResim').value;
+
+    const yeniIlan = document.createElement('div');
+    yeniIlan.className = 'car-item dynamic-item';
+    yeniIlan.setAttribute('data-price', fiyat);
+    yeniIlan.setAttribute('data-brand', marka);
+    yeniIlan.onclick = function() { detayAc(baslik, yil, km, vites, parseInt(fiyat).toLocaleString() + " TL", resim, ad, konum, tel); };
+
+    yeniIlan.innerHTML = `
+        <div class="delete-btn" onclick="ilanSil(event, this)">×</div>
+        <img src="${resim}" alt="Yeni İlan">
+        <div class="car-details">
+            <h4>${baslik}</h4>
+            <p>${yil} | ${km} KM | ${vites}</p>
+            <span class="car-price">${parseInt(fiyat).toLocaleString()} TL</span>
+        </div>`;
+
+    document.getElementById('carList').prepend(yeniIlan);
+    alert("İlanın başarıyla eklendi kanka!");
+    ilanPanelKapat();
+    document.querySelectorAll('#ilanModal input').forEach(i => i.value = "");
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('carModal')) detayKapat();
+    if (event.target == document.getElementById('contactModal')) iletisimKapat();
+    if (event.target == document.getElementById('ilanModal')) ilanPanelKapat();
+    if (event.target == document.getElementById('authModal')) authModalKapat();
+}
+</script>
+</body>
+</html>
